@@ -7,10 +7,8 @@ services:
       - "3000:3000"
     depends_on:
       - db
-    volumes: 
-      - "./postgrest.conf:/etc/postgrest/postgrest.conf"
     environment:
-      PGRST_DB_URI: postgres://app_user:password@db:5432/app_db
+      PGRST_DB_URI: postgres://superset:superset@db:5432/everse
       PGRST_OPENAPI_SERVER_PROXY_URI: http://127.0.0.1:3000
       #PGRST_DB_URI: postgres://authenticator:password@psql/db
       ## PGRST_SERVER_HOST: 0.0.0.0
@@ -33,9 +31,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: app_db
-      POSTGRES_USER: app_user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: everse
+      POSTGRES_USER: superset
+      POSTGRES_PASSWORD: superset
   # Uncomment this if you want to persist the data.
   # volumes:
   #   - "./pgdata:/var/lib/postgresql/data"
