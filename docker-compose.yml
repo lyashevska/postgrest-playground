@@ -1,16 +1,33 @@
 # docker-compose.yml
 
-version: '3'
 services:
   server:
     image: postgrest/postgrest
     ports:
       - "3000:3000"
+    depends_on:
+      - db
+    volumes: 
+      - "./postgrest.conf:/etc/postgrest/postgrest.conf"
     environment:
       PGRST_DB_URI: postgres://app_user:password@db:5432/app_db
       PGRST_OPENAPI_SERVER_PROXY_URI: http://127.0.0.1:3000
-    depends_on:
-      - db
+      #PGRST_DB_URI: postgres://authenticator:password@psql/db
+      ## PGRST_SERVER_HOST: 0.0.0.0
+      ## PGRST_SERVER_PORT: 3000
+      PGRST_DB_SCHEMA: api
+      #PGRST_JWT_SECRET: "@/etc/postgrest/public_key.rsa.jwk.pub"
+      #PGRST_JWT_SECRET_IS_BASE64: false
+      #PGRST_JWT_AUD: <aud>
+      ## PGRST_ROLE_CLAIM_KEY: .sub
+      ## PGRST_JWT_CACHE_MAX_LIFETIME: 86400
+      #PGRST_DB_CONFIG: false
+      #PGRST_LOG_LEVEL: info
+      ## PGRST_SERVER_TRACE_HEADER: X-Request-Id
+      PGRST_DB_ANON_ROLE: web_anon
+      PGRST_OPENAPI_MODE: 'ignore-privileges'
+      #PGRST_OPENAPI_SECURITY_ACTIVE: true
+      ## PGRST_OPENAPI_SERVER_PROXY_URI: http://nginx:80
   db:
     image: postgres
     ports:
@@ -22,3 +39,11 @@ services:
   # Uncomment this if you want to persist the data.
   # volumes:
   #   - "./pgdata:/var/lib/postgresql/data"
+  swagger:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8080:8080"
+    expose:
+      - "8080"
+    environment:
+      API_URL: http://localhost:3000/
