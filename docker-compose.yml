@@ -14,10 +14,10 @@ services:
       ## PGRST_SERVER_HOST: 0.0.0.0
       ## PGRST_SERVER_PORT: 3000
       PGRST_DB_SCHEMA: api
-      #PGRST_JWT_SECRET: "@/etc/postgrest/public_key.rsa.jwk.pub"
-      #PGRST_JWT_SECRET_IS_BASE64: false
+      PGRST_JWT_SECRET: "@/etc/postgrest/public_key.rsa.jwk.pub"
+      PGRST_JWT_SECRET_IS_BASE64: false
+      PGRST_ROLE_CLAIM_KEY: .sub
       #PGRST_JWT_AUD: <aud>
-      ## PGRST_ROLE_CLAIM_KEY: .sub
       ## PGRST_JWT_CACHE_MAX_LIFETIME: 86400
       #PGRST_DB_CONFIG: false
       #PGRST_LOG_LEVEL: info
