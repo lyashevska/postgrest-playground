@@ -47,11 +47,12 @@ JWT_SECRET="xlIjoid2ViX2Fub24iLCJ1c2VyX2lkIjoxL" python scripts/generate_jwt.py
 ```
 
 6. Populate table via API
-     -H "Authorization: Bearer <your-jwt-token>" \
+    
 
 ```
 curl -X POST http://localhost:3000/assessment \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <your-jwt-token>" \
   -d '{
     "name": "software_1",
     "version": "1.0.0",
@@ -72,7 +73,7 @@ curl -X POST http://localhost:3000/assessment \
   }'
 
 ```
-Replace <your-jwt-token> with the one generated in previous step.
+Replace <your-jwt-token> with the one generated in step 5.
 
 7. Query table
 ```
@@ -81,12 +82,10 @@ curl http://localhost:3000/assessment \
 
 ```
 
-For example:
+Test with and without token:
 
 
 ```
-python generate_jwt.py
-
 curl http://localhost:3000/assessment \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoid2ViX2Fub24iLCJ1c2VyX2lkIjoxLCJpYXQiOjE3NDk1NjAyODAsImV4cCI6MTc0OTU2Mzg4MH0.tqCEKvwoQ_XRAVs5VkAen6des__FH58m0s3DZQqhImc"
 ```
