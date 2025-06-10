@@ -15,7 +15,7 @@ services:
       ## PGRST_SERVER_PORT: 3000
       PGRST_DB_SCHEMA: api
       #PGRST_JWT_SECRET: "@/etc/postgrest/public_key.rsa.jwk.pub"
-      PGRST_JWT_SECRET: "secret-key"
+      PGRST_JWT_SECRET: "xlIjoid2ViX2Fub24iLCJ1c2VyX2lkIjoxL"
       PGRST_JWT_SECRET_IS_BASE64: false
       PGRST_ROLE_CLAIM_KEY: ".role"
       #PGRST_JWT_AUD: <aud>
@@ -45,16 +45,5 @@ services:
     expose:
       - "8080"
     environment:
-      API_URL: http://localhost:3000/
-  jwtgen:
-    image: python:3.11-slim
-    volumes:
-      - ./scripts:/app
-    working_dir: /app
-    environment:
-      JWT_SECRET: secret-key
-    entrypoint:
-      - /bin/sh
-      - -c
-      - "pip install pyjwt && python generate_jwt.py"    
+      API_URL: http://localhost:3000/ 
 

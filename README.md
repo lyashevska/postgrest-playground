@@ -43,15 +43,15 @@ GRANT USAGE, SELECT ON SEQUENCE api.assessment_id_seq TO web_anon;
 5. Generate JWT Token
 
 ```
-docker compose run --rm jwtgen --role web_anon --user-id 123 --expire 30
+JWT_SECRET="xlIjoid2ViX2Fub24iLCJ1c2VyX2lkIjoxL" python scripts/generate_jwt.py
 ```
 
 6. Populate table via API
-   
+     -H "Authorization: Bearer <your-jwt-token>" \
+
 ```
 curl -X POST http://localhost:3000/assessment \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <your-jwt-token>" \
   -d '{
     "name": "software_1",
     "version": "1.0.0",
@@ -79,4 +79,14 @@ Replace <your-jwt-token> with the one generated in previous step.
 curl http://localhost:3000/assessment \
   -H "Authorization: Bearer <your-jwt-token>"
 
+```
+
+For example:
+
+
+```
+python generate_jwt.py
+
+curl http://localhost:3000/assessment \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoid2ViX2Fub24iLCJ1c2VyX2lkIjoxLCJpYXQiOjE3NDk1NjAyODAsImV4cCI6MTc0OTU2Mzg4MH0.tqCEKvwoQ_XRAVs5VkAen6des__FH58m0s3DZQqhImc"
 ```
