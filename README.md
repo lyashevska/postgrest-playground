@@ -1,4 +1,10 @@
-Local PostgREST stack with PostgreSQL and Swagger UI.
+Local PostgREST stack (PostgreSQL, Swagger UI and JWT auth)
+
+This project sets up a PostgREST environment with:
+- PostgreSQL for data storage
+- PostgREST for RESTful API generation
+- Swagger UI for exploring the API
+- JWT-based authentication
 
 Requirements:
 - docker
@@ -6,19 +12,23 @@ Requirements:
   
 Steps:
 
-1. Run docker compose
+1. Start the stack
+
 ```
 docker compose -f docker-compose.yml up 
 ```
-2. Create database for API
+This launches PostgreSQL, PostgREST API at http://localhost:3000, and Swagger UI at http://localhost:8080.
+
+2. Connect to PostgreSQL
+
 ```
 docker exec -ti postgrest-playground-db-1 psql -U superset -d everse -h localhost
 ```
-3. Create a named schema for the database objects which will be exposed in the API.
+3. Create API Schema
 ```
-create schema api;
+CREATE SCHEMA IF NOT EXISTS api;
 ```
-4. Create a table, roles and permissions
+4. Create Tables, roles and Permissions
 ```
 CREATE TABLE api.assessment (
   id SERIAL PRIMARY KEY,
@@ -30,16 +40,35 @@ CREATE TABLE api.assessment (
 );
 
 CREATE ROLE web_anon NOLOGIN;
+
 GRANT USAGE ON SCHEMA api TO web_anon;
 GRANT SELECT, INSERT, UPDATE, DELETE ON api.assessment TO web_anon;
 GRANT USAGE, SELECT ON SEQUENCE api.assessment_id_seq TO web_anon;
+
+ALTER TABLE api.assessment ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY api_user_policy ON api.assessment
+  FOR ALL
+  TO web_anon
+  USING (
+    (current_setting('request.jwt.claims', true)::json->>'user_id')::int = 1
+  );
+
 ```
 
-5. Populate table
-   
+5. Generate JWT Token
+
+```
+JWT_SECRET="xlIjoid2ViX2Fub24iLCJ1c2VyX2lkIjoxL" python scripts/generate_jwt.py
+```
+
+6. Populate table via API
+  
+
 ```
 curl -X POST http://localhost:3000/assessment \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoid2ViX2Fub24iLCJ1c2VyX2lkIjoxLCJpYXQiOjE3NDk2MzQ5NDMsImV4cCI6MTc0OTYzODU0M30.ckHHaWs5PHXTgXX4WZsifw0UXe55Wiqj_ZbTXWgRprU" \
   -d '{
     "name": "software_1",
     "version": "1.0.0",
@@ -58,11 +87,14 @@ curl -X POST http://localhost:3000/assessment \
       }
     }
   }'
-```
-
-6. Check
-```
-curl http://localhost:3000/assessment
 
 ```
-For a visual overview of API go to http://localhost:8080/. Also access both the database and PostgREST via http://localhost:3000/
+Replace <your-jwt-token> with the one generated in step 5.
+
+
+7. Query table with and without token
+```
+curl http://localhost:3000/assessment \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoid2ViX2Fub24iLCJ1c2VyX2lkIjoxLCJpYXQiOjE3NDk2MzQ5NDMsImV4cCI6MTc0OTYzODU0M30.ckHHaWs5PHXTgXX4WZsifw0UXe55Wiqj_ZbTXWgRprU"
+
+```
