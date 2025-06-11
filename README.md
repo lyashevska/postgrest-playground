@@ -89,10 +89,10 @@ curl -X POST http://localhost:3000/assessment \
   }'
 
 ```
-Replace <your-jwt-token> with the one generated in step 5.
+Make sure to replace authorisation token with the one generated in step 5.
 
 
-7. Query table with and without token
+7. Query table with and without token 
 ```
 curl http://localhost:3000/assessment \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoid2ViX2Fub24iLCJ1c2VyX2lkIjoxLCJpYXQiOjE3NDk2MzQ5NDMsImV4cCI6MTc0OTYzODU0M30.ckHHaWs5PHXTgXX4WZsifw0UXe55Wiqj_ZbTXWgRprU"
