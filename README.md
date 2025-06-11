@@ -50,7 +50,9 @@ ALTER TABLE api.assessment ENABLE ROW LEVEL SECURITY;
 CREATE POLICY api_user_policy ON api.assessment
   FOR ALL
   TO web_anon
-  USING (true);
+  USING (
+    (current_setting('request.jwt.claims', true)::json->>'user_id')::int = 1
+  );
 
 ```
 
@@ -61,12 +63,12 @@ JWT_SECRET="xlIjoid2ViX2Fub24iLCJ1c2VyX2lkIjoxL" python scripts/generate_jwt.py
 ```
 
 6. Populate table via API
-    
+  
 
 ```
 curl -X POST http://localhost:3000/assessment \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoid2ViX2Fub24iLCJ1c2VyX2lkIjoxLCJpYXQiOjE3NDk2MzQyNjAsImV4cCI6MTc0OTYzNzg2MH0.wzFA_HappOplWhtNa2WINMKmfDocHW5ngppQvvyaTk8" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoid2ViX2Fub24iLCJ1c2VyX2lkIjoxLCJpYXQiOjE3NDk2MzQ5NDMsImV4cCI6MTc0OTYzODU0M30.ckHHaWs5PHXTgXX4WZsifw0UXe55Wiqj_ZbTXWgRprU" \
   -d '{
     "name": "software_1",
     "version": "1.0.0",
@@ -93,6 +95,6 @@ Replace <your-jwt-token> with the one generated in step 5.
 7. Query table with and without token
 ```
 curl http://localhost:3000/assessment \
-  -H "Authorization: Bearer <your-jwt-token>"
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoid2ViX2Fub24iLCJ1c2VyX2lkIjoxLCJpYXQiOjE3NDk2MzQ5NDMsImV4cCI6MTc0OTYzODU0M30.ckHHaWs5PHXTgXX4WZsifw0UXe55Wiqj_ZbTXWgRprU"
 
 ```
